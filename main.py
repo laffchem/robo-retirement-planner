@@ -314,7 +314,9 @@ def get_age(text: str) -> int:
     while True:
         try:
             user_input: int = int(input(text))
-            if user_input >= 0 and user_input <= 130:
+            if (
+                user_input >= 0 and user_input <= 130
+            ):  # future proofing in case we start living much longer
                 return user_input
             else:
                 print("Please enter an age less than 130.")
@@ -326,7 +328,9 @@ def get_retirement_age(text: str, age: int) -> int:
     while True:
         try:
             user_input: int = int(input(text))
-            if user_input > age:
+            if (
+                user_input > age and user_input <= 130
+            ):  # future proofing in case we start living much longer
                 return user_input
             else:
                 print(
