@@ -364,6 +364,7 @@ def investment_per_paycheck(
 
 def allocation(age: int, investment: dict) -> str | None:
     try:
+        actual_age: int = age
         if age <= 25:
             age = 25
         elif age >= 75:
@@ -373,9 +374,7 @@ def allocation(age: int, investment: dict) -> str | None:
             age = round_to_nearest_five(age)  # type: ignore
         stocks = investment[age]["stocks"]
         bonds = investment[age]["bonds"]
-        return (
-            f"You fall into this Age Bracket: {age}. Stocks: {stocks}%, Bonds: {bonds}%"
-        )
+        return f"Given your current age of {actual_age}, your asset allocation should be Stocks: {stocks}% Bonds: {bonds}%"
     except ValueError as e:
         print(f"Your value is incorrect {e}")
 
@@ -392,16 +391,20 @@ def get_life_expectancy(
         print(f"There was an error: {e}")
 
 
-def calc_income_percent(income: float, contribution: float) -> float | None:
+def calc_income_percent(income: float, contribution: float) -> str | None:
     try:
         user_income: float = income
         user_contribution: float = contribution
         bi_weekly_check: float = round(user_income / 26, 2)
         percent_pre_tax: float = (user_contribution / bi_weekly_check) * 100
-        if percent_pre_tax >= 0:
-            return percent_pre_tax
+        if percent_pre_tax >= 0 and percent_pre_tax <= 20:
+            return f"Keep in mind, you would need to contribute {percent_pre_tax:.2f}% of your bi-weekly check."
+        elif percent_pre_tax > 20 and percent_pre_tax <= 35:
+            return f"Keep in mind, you would be contributing {percent_pre_tax:.2f}% of your bi-weekly check which is higher than the recommended 20%."
+        elif percent_pre_tax > 35 and percent_pre_tax < 100:
+            return f"Keep in mind, it would be very difficult to maintain this contribution schedule due to you using {percent_pre_tax:.2f}% of your bi-weekly income."
         else:
-            return 0
+            return f"You would not be able to meet this goal with your current pay. You would need to contribute {percent_pre_tax:.2f}% of your bi-weekly check."
     except Exception as e:
         print(f"There was an error: {e}")
 
@@ -447,7 +450,7 @@ def main():
         The amount of years until you retire is {retirement_countdown}
         Your target for your retirement account is ${retirement_target:.2f}
         {your_investment}
-        You would need to contribute ${contribution:.2f} per pay period until retirement Keep in mind this is {income_percent:.2f}% of your bi-weekly check.
+        You would need to contribute ${contribution:.2f} per pay period until retirement {income_percent}
         Your remaining life expectancy is estimated to be {life_expectancy} years.
         """
     )
