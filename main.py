@@ -1,17 +1,15 @@
-# TODO - Math stuff
-
 investment_portfolio = {
     25: {"stocks": 100, "bonds": 0},
-    30: {"stocks": 95, "bonds": 0},
-    35: {"stocks": 85, "bonds": 10},
-    40: {"stocks": 75, "bonds": 20},
-    45: {"stocks": 65, "bonds": 30},
-    50: {"stocks": 55, "bonds": 40},
-    55: {"stocks": 45, "bonds": 50},
-    60: {"stocks": 35, "bonds": 60},
-    65: {"stocks": 25, "bonds": 70},
-    70: {"stocks": 15, "bonds": 80},
-    75: {"stocks": 5, "bonds": 90},
+    30: {"stocks": 95, "bonds": 5},
+    35: {"stocks": 85, "bonds": 15},
+    40: {"stocks": 75, "bonds": 25},
+    45: {"stocks": 65, "bonds": 35},
+    50: {"stocks": 55, "bonds": 45},
+    55: {"stocks": 45, "bonds": 55},
+    60: {"stocks": 35, "bonds": 65},
+    65: {"stocks": 25, "bonds": 75},
+    70: {"stocks": 15, "bonds": 85},
+    75: {"stocks": 5, "bonds": 95},
 }
 
 life_expectancy_table_male = {
@@ -389,6 +387,20 @@ def get_life_expectancy(
         print(f"There was an error: {e}")
 
 
+def calc_income_percent(income: float, contribution: float) -> float | None:
+    try:
+        user_income: float = income
+        user_contribution: float = contribution
+        bi_weekly_check: float = round(user_income / 26, 2)
+        percent_pre_tax: float = (user_contribution / bi_weekly_check) * 100
+        if percent_pre_tax >= 0:
+            return percent_pre_tax
+        else:
+            return 0
+    except Exception as e:
+        print(f"There was an error: {e}")
+
+
 def main():
     gender: str = get_gender(
         "Please enter your gender. The value must be m for male or f for female: "
@@ -412,6 +424,8 @@ def main():
     contribution: float = investment_per_paycheck(
         retirement_target, retirement_countdown, saved_amount
     )
+    income_percent: float = calc_income_percent(income, contribution)  # type: ignore
+
     if gender == "male":
         life_expectancy = get_life_expectancy(customer_age, life_expectancy_table_male)
     else:
@@ -428,7 +442,7 @@ def main():
         The amount of years until you retire is {retirement_countdown}
         Your target for your retirement account is ${retirement_target:.2f}
         {your_investment}
-        You would need to contribute ${contribution:.2f} per pay period until retirement.
+        You would need to contribute ${contribution:.2f} per pay period until retirement Keep in mind this is {income_percent:.2f}% of your bi-weekly check.
         Your remaining life expectancy is estimated to be {life_expectancy} years.
         """
     )
