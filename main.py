@@ -340,21 +340,26 @@ def get_retirement_age(text: str, age: int) -> int:
 
 def investment_per_paycheck(
     retirement_target: float, years_to_retire: int, principal: float = 0
-) -> float:
-    r: float = 0.07  # This is guestimating an average 7% return
-    n: int = 26  # Bi-weekly paychecks
-    t: int = years_to_retire  # Years to retirement target
-    p: float = principal  # Starting with input, would default to 0.
-    fv: float = retirement_target  # This is what we want in our 401k. (future value)
+) -> float | None:
+    try:
+        r: float = 0.07  # This is guestimating an average 7% return
+        n: int = 26  # Bi-weekly paychecks
+        t: int = years_to_retire  # Years to retirement target
+        p: float = principal  # Starting with input, would default to 0.
+        fv: float = (
+            retirement_target  # This is what we want in our 401k. (future value)
+        )
 
-    numerator: float = fv - p * (1 + r / n) ** (n * t)
-    denominator: float = ((1 + r / n) ** (n * t) - 1) / (r / n)
+        numerator: float = fv - p * (1 + r / n) ** (n * t)
+        denominator: float = ((1 + r / n) ** (n * t) - 1) / (r / n)
 
-    contribution: float = numerator / denominator
-    if contribution <= 0:
-        return 0
-    else:
-        return round(contribution, 2)
+        contribution: float = numerator / denominator
+        if contribution <= 0:
+            return 0
+        else:
+            return round(contribution, 2)
+    except Exception as e:
+        print(f"There was an error: {e}")
 
 
 def allocation(age: int, investment: dict) -> str | None:
@@ -423,7 +428,7 @@ def main():
     your_investment: str = allocation(customer_age, investment_portfolio)  # type: ignore
     contribution: float = investment_per_paycheck(
         retirement_target, retirement_countdown, saved_amount
-    )
+    )  # type: ignore
     income_percent: float = calc_income_percent(income, contribution)  # type: ignore
 
     if gender == "male":
